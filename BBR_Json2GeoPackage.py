@@ -25,26 +25,12 @@ def convert_to_geojson(input_data):
         }
 
         for key, value in item.items():
-            if key == "etageList":
-                # Flatten etage data
-                for i, etage in enumerate(value):
-                    for etage_key, etage_value in etage["etage"].items():
-                        feature["properties"][f"etage_{i + 1}_{etage_key}"] = etage_value
-            elif key == "opgangList":
-                # Flatten opgang data
-                for i, opgang in enumerate(value):
-                    for opgang_key, opgang_value in opgang["opgang"].items():
-                        feature["properties"][f"opgang_{i + 1}_{opgang_key}"] = opgang_value
-            elif key == "bygningPåFremmedGrundList":
-                # Flatten bygningPåFremmedGrund data
-                for i, bygningPåFremmedGrund in enumerate(value):
-                    for bygningPåFremmedGrund_key, bygningPåFremmedGrund_value in bygningPåFremmedGrund["bygningPåFremmedGrund"].items():
-                        feature["properties"][f"bygningPåFremmedGrund_{i + 1}_{bygningPåFremmedGrund_key}"] = bygningPåFremmedGrund_value
-            elif key == "fordelingsarealList":
-                # Flatten fordelingsareal data
-                for i, fordelingsareal in enumerate(value):
-                    for fordelingsareal_key, fordelingsareal_value in fordelingsareal["fordelingsareal"].items():
-                        feature["properties"][f"fordelingsareal_{i + 1}_{fordelingsareal_key}"] = fordelingsareal_value
+            if key in ["etageList", "opgangList", "bygningPåFremmedGrundList", "fordelingsarealList"]:
+                # Flatten nested lists if present
+                for i in range(len(value)):
+                    nested_item = value[i].get(key[:-4], {})  # Remove "List" from key name
+                    for nested_key, nested_value in nested_item.items():
+                        feature["properties"][f"{key[:-4]}_{i + 1}_{nested_key}"] = nested_value
             elif key != "byg404Koordinat":
                 feature["properties"][key] = value
 
@@ -52,8 +38,17 @@ def convert_to_geojson(input_data):
 
     return geojson_data
 
+
 def convert_to_geopackage(input_geojson, output_file):
     gdf = gpd.GeoDataFrame.from_features(input_geojson["features"])
+
+    # Define spatial reference
+    crs = {'init': 'epsg:7416'}  # EPSG:7416
+
+    # Set spatial reference for GeoDataFrame
+    gdf.crs = crs
+
+    # Save GeoDataFrame to GeoPackage
     gdf.to_file(output_file, driver="GPKG", encoding='utf-8')  # Ensure proper encoding
 
 def select_input_file():
