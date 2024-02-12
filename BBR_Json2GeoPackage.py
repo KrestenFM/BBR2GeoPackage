@@ -71,26 +71,26 @@ def convert():
     output_file = output_entry.get()
 
     if not input_file:
-        messagebox.showerror("Error", "Please select an input file.")
+        messagebox.showerror("Error", "Vælg venligst en input fil.")
         return
 
     try:
         with open(input_file, "r", encoding='utf-8') as f:  # Ensure proper encoding
             input_data = json.load(f)
     except FileNotFoundError:
-        messagebox.showerror("Error", "Input file not found.")
+        messagebox.showerror("Error", "Ingen Input fil fundet.")
         return
     except json.JSONDecodeError:
-        messagebox.showerror("Error", "Invalid JSON format in input file.")
+        messagebox.showerror("Error", "Invalid JSON format i input fil.")
         return
 
     geojson_output = convert_to_geojson(input_data)
 
     try:
         convert_to_geopackage(geojson_output, output_file)
-        messagebox.showinfo("Success", "Conversion to GeoPackage completed successfully.")
+        messagebox.showinfo("Success", "Konventering til GeoPackage fuldført.")
     except Exception as e:
-        messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
 
 # Create GUI
 root = tk.Tk()
