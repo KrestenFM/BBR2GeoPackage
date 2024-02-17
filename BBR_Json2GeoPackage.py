@@ -4,10 +4,12 @@
 import json
 import tkinter as tk
 import ttkbootstrap as ttk
+import geopandas as gpd
+##import pyi_splash
 from tkinter import filedialog, messagebox
 from ttkbootstrap.constants import *
 from ttkbootstrap.style import Bootstyle
-import geopandas as gpd
+
 
 def convert_to_geojson(input_data):
     geojson_data = {
@@ -94,6 +96,8 @@ def convert():
         messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
 
 # Create GUI
+##pyi_splash.close()
+
 root = ttk.Window(themename="litera")
 root.title("BBR - JSON2GeoPackage Konverter")
 
