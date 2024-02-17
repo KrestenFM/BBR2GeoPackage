@@ -1,8 +1,12 @@
-# Written by KrestenFM
+# Written by Kresten Faarup Marcussen
+# Licenced under MIT
 
 import json
 import tkinter as tk
+import ttkbootstrap as ttk
 from tkinter import filedialog, messagebox
+from ttkbootstrap.constants import *
+from ttkbootstrap.style import Bootstyle
 import geopandas as gpd
 
 def convert_to_geojson(input_data):
@@ -90,28 +94,28 @@ def convert():
         messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
 
 # Create GUI
-root = tk.Tk()
+root = ttk.Window(themename="litera")
 root.title("BBR - JSON2GeoPackage Konverter")
 
-input_label = tk.Label(root, text="Input JSON fil:")
-input_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+input_label = ttk.Label(root, text="Input JSON fil:")
+input_label.grid(row=0, column=0, padx=5, pady=5, sticky=ttk.W)
 
-input_entry = tk.Entry(root, width=50)
+input_entry = ttk.Entry(root, width=50)
 input_entry.grid(row=0, column=1, padx=5, pady=5)
 
-input_button = tk.Button(root, text="Vælg", command=select_input_file)
+input_button = ttk.Button(root, text="Vælg", command=select_input_file)
 input_button.grid(row=0, column=2, padx=5, pady=5)
 
-output_label = tk.Label(root, text="Output GeoPackage fil:")
-output_label.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+output_label = ttk.Label(root, text="Output GeoPackage fil:")
+output_label.grid(row=1, column=0, padx=5, pady=5, sticky=ttk.W)
 
-output_entry = tk.Entry(root, width=50)
+output_entry = ttk.Entry(root, width=50)
 output_entry.grid(row=1, column=1, padx=5, pady=5)
 
-output_button = tk.Button(root, text="Vælg", command=select_output_file)
+output_button = ttk.Button(root, text="Vælg", command=select_output_file)
 output_button.grid(row=1, column=2, padx=5, pady=5)
 
-convert_button = tk.Button(root, text="Konventer", command=convert)
+convert_button = ttk.Button(root, text="Konventer", command=convert)
 convert_button.grid(row=2, column=1, padx=5, pady=5)
 
 root.mainloop()
