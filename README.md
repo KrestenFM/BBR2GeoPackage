@@ -7,3 +7,5 @@ The software was primarily created for use by the students and faculty, alumni o
 Notice that the packages geopandas, ttkbootstrap and requests are required for the python script, BBR2GeoPackage.py, to run. 
 
 The executable has no requirements, but due to a lack of Windows certification, is considered "unsafe" by the OS.
+
+This program is in Danish
