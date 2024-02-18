@@ -7,11 +7,11 @@ import ttkbootstrap as ttk
 import geopandas as gpd
 import requests
 ##import pyi_splash
-from datetime import date
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
+from ttkbootstrap.tooltip import ToolTip
 from ttkbootstrap.style import Bootstyle
 
 def convert_to_geojson(input_data):
@@ -60,7 +60,7 @@ def convert_to_geopackage(input_geojson, output_file):
     gdf.crs = crs
 
     # Save GeoDataFrame to GeoPackage
-    gdf.to_file(output_file, driver="GPKG", encoding='utf-8')  # Ensure proper encoding
+    gdf.to_file(output_file, driver="GPKG", encoding='utf-8')
 
 def convert_local():
     input_file = input_entry.get()
@@ -71,7 +71,7 @@ def convert_local():
         return
 
     try:
-        with open(input_file, "r", encoding='utf-8') as f:  # Ensure proper encoding
+        with open(input_file, "r", encoding='utf-8') as f:
             input_data = json.load(f)
     except FileNotFoundError:
         messagebox.showerror("Error", "Ingen Input fil fundet.")
@@ -88,17 +88,25 @@ def convert_local():
     except Exception as e:
         messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
         
+import requests
+
 def rest_call(payload):
     try:
-        response = requests.get('https://services.datafordeler.dk/BBR/BBRPublic/1/rest/bygning', params=payload)
-        response.raise_for_status()  # Raise an exception for non-200 status codes
+        headers = {
+            'accept': 'application/json',
+            'accept-charset': 'utf-8'
+        }
+        response = requests.get('https://services.datafordeler.dk/BBR/BBRPublic/1/rest/bygning', params=payload, headers=headers)
+        response.raise_for_status()
+        response.encoding = 'UTF-8'
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error during REST API call: {e}")
         return None
 
+
 def remove_empty_values(payload):
-    return {k: v for k, v in payload.items() if v}  # Filter out empty values
+    return {k: v for k, v in payload.items() if v}
 
 def convert_rest():
     payload = {
@@ -106,7 +114,7 @@ def convert_rest():
         'password': password_entry_rest.get(),
         'kommunekode': kommunekode_entry_rest.get(),
         'BFENummer': BFENummer_entry_rest.get(),
-        'MedDybde': MedDybde_check_rest.get(),
+        #'MedDybde': MedDybde_check_rest.get(),
         'pagesize': pagesize_entry_rest.get(),
         'page': page_entry_rest.get(),
         'Id': id_entry_rest.get(),
@@ -140,7 +148,7 @@ def convert_rest():
         'format': 'json',
     }
 
-    payload = remove_empty_values(payload)  # Remove empty values from payload
+    payload = remove_empty_values(payload)
 
     input_data = rest_call(payload)
     if input_data:
@@ -152,9 +160,11 @@ def convert_rest():
             messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
 
 # Create GUI
+##pyi_splash.close()
+
 IMG_PATH = Path(__file__).parent / 'Resources'
 
-root = ttk.Window(themename="litera")
+root = ttk.Window(themename="litera",iconphoto='bbr2gp.png')
 root.title("JSON to GeoPackage Converter")
 
 #Collapsing Frame
@@ -403,7 +413,7 @@ BFENummer_entry_rest.grid(row=1, column=1, padx=5, pady=5)
 
 MedDybde_label_rest = ttk.Label(group3, text="Medtag Nested elementer (Etage, Opgang m.m.):")
 MedDybde_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
-MedDybde_check_rest = ttk.Entry(group3, width=30)
+MedDybde_check_rest = ttk.Checkbutton(group3, bootstyle="PRIMARY-round-toggle")
 MedDybde_check_rest.grid(row=2, column=1, padx=5, pady=5)
 
 # Advancerede parametre
@@ -415,7 +425,7 @@ pagesize_label_rest = ttk.Label(group4, text="Maks data per side:")
 pagesize_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 pagesize_entry_rest = ttk.Entry(group4, width=30)
 pagesize_entry_rest.grid(row=0, column=1, padx=5, pady=5)
-pagesize_entry_rest.insert(0, '10')  # Default value
+pagesize_entry_rest.insert(0, '9999999')  # Default value
 
 page_label_rest = ttk.Label(group4, text="Side:")
 page_label_rest.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
@@ -560,7 +570,7 @@ PeriodeaendringTil_date_rest.grid(row=28, column=1, padx=5, pady=5)
 
 KunNyesteIPeriode_label_rest = ttk.Label(group4, text="BFE Nummer:")
 KunNyesteIPeriode_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
-KunNyesteIPeriode_check_rest = ttk.Entry(group3, width=30)
+KunNyesteIPeriode_check_rest = ttk.Entry(group4, width=30)
 KunNyesteIPeriode_check_rest.grid(row=29, column=1, padx=5, pady=5)
 
 #Konventering
