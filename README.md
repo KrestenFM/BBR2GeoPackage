@@ -1,4 +1,4 @@
-# BBRJson2Geopackage
+# BBR2GeoPackage
  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![Python](https://img.shields.io/badge/Python-3.12.1-lime)
 
 A repository for the conversion software between BBR Bygning from the datafordeler.dk REST API JSON output and the GeoPackage format.
