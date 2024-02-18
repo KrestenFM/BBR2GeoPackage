@@ -144,7 +144,7 @@ def convert_rest():
         'Vest': Vest_entry_rest.get(),
         'PeriodeaendringFra': PeriodeaendringFra_date_rest.get(),
         'PeriodeaendringTil': PeriodeaendringTil_date_rest.get(),
-        'KunNyesteIPeriode': KunNyesteIPeriode_check_rest.get(),
+        #'KunNyesteIPeriode': KunNyesteIPeriode_check_rest.get(),
         'format': 'json',
     }
 
@@ -570,7 +570,7 @@ PeriodeaendringTil_date_rest.grid(row=28, column=1, padx=5, pady=5)
 
 KunNyesteIPeriode_label_rest = ttk.Label(group4, text="BFE Nummer:")
 KunNyesteIPeriode_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
-KunNyesteIPeriode_check_rest = ttk.Entry(group4, width=30)
+MedDybde_check_rest = ttk.Checkbutton(group4, bootstyle="PRIMARY-round-toggle")
 KunNyesteIPeriode_check_rest.grid(row=29, column=1, padx=5, pady=5)
 
 #Konventering
