@@ -9,4 +9,3 @@ Notice that the packages geopandas, pyogrio, ttkbootstrap and requests are requi
 The executable has no requirements, but due to a lack of Windows certification and being compiled by Pyinstaller, it is considered "unsafe" by the OS and a false positive trojan can appear.
 
 This program is in Danish.
->>>>>>> main
