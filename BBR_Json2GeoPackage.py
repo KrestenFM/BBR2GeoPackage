@@ -14,6 +14,8 @@ from ttkbootstrap.scrolled import ScrolledFrame
 from ttkbootstrap.tooltip import ToolTip
 from ttkbootstrap.style import Bootstyle
 
+gpd.options.io_engine = "pyogrio"
+
 def convert_to_geojson(input_data):
     geojson_data = {
         "type": "FeatureCollection",
