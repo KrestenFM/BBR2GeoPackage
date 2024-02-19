@@ -4,8 +4,9 @@
 A repository for the conversion software between BBR Bygning from the datafordeler.dk REST API JSON output and the GeoPackage format.
 The software was primarily created for use by the students and faculty, alumni of the Department of Sustainability and Planning at AAU - Aalborg University.
 
-Notice that the packages geopandas, ttkbootstrap and requests are required for the python script, BBR2GeoPackage.py, to run. 
+Notice that the packages geopandas, pyogrio, ttkbootstrap and requests are required for the python script, BBR2GeoPackage.py, to run.
 
 The executable has no requirements, but due to a lack of Windows certification and being compiled by Pyinstaller, it is considered "unsafe" by the OS and a false positive trojan can appear.
 
 This program is in Danish.
+>>>>>>> main
