@@ -8,4 +8,4 @@ Notice that the packages geopandas, ttkbootstrap and requests are required for t
 
 The executable has no requirements, but due to a lack of Windows certification, is considered "unsafe" by the OS.
 
-This program is in Danish
+This program is in Danish.
