@@ -1,5 +1,5 @@
 # BBR2GeoPackage
- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![Python](https://img.shields.io/badge/Python-3.12.1-green) ![Language](https://img.shields.io/badge/🇩🇰-Danish-red)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![Python](https://img.shields.io/badge/Python-3.12.1-green) ![Language](https://img.shields.io/badge/Language-🇩🇰_Danish-red)
 
 A repository for the conversion software between BBR Bygning from the datafordeler.dk REST API JSON output and the GeoPackage format.
 The software was primarily created for use by the students and faculty, alumni of the Department of Sustainability and Planning at AAU - Aalborg University.
