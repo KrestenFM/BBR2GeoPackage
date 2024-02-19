@@ -6,13 +6,15 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import geopandas as gpd
 import requests
-##import pyi_splash
+#import pyi_splash
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from ttkbootstrap.tooltip import ToolTip
 from ttkbootstrap.style import Bootstyle
+
+gpd.options.io_engine = "pyogrio"
 
 def convert_to_geojson(input_data):
     geojson_data = {
@@ -112,9 +114,9 @@ def convert_rest():
     payload = {
         'username': username_entry_rest.get(),
         'password': password_entry_rest.get(),
-        'kommunekode': kommunekode_entry_rest.get(),
+        'kommunekode': selected_Komkode,
         'BFENummer': BFENummer_entry_rest.get(),
-        #'MedDybde': MedDybde_check_rest.get(),
+        'MedDybde': MedDybde_check_Tell,
         'pagesize': pagesize_entry_rest.get(),
         'page': page_entry_rest.get(),
         'Id': id_entry_rest.get(),
@@ -144,7 +146,7 @@ def convert_rest():
         'Vest': Vest_entry_rest.get(),
         'PeriodeaendringFra': PeriodeaendringFra_date_rest.get(),
         'PeriodeaendringTil': PeriodeaendringTil_date_rest.get(),
-        #'KunNyesteIPeriode': KunNyesteIPeriode_check_rest.get(),
+#        'KunNyesteIPeriode': KunNyesteIPeriode_check_Tell,
         'format': 'json',
     }
 
@@ -160,7 +162,7 @@ def convert_rest():
             messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
 
 # Create GUI
-##pyi_splash.close()
+#pyi_splash.close()
 
 IMG_PATH = Path(__file__).parent / 'Resources'
 
@@ -401,9 +403,122 @@ password_entry_rest.grid(row=1, column=1, padx=5, pady=5)
 group3 = ttk.Frame(cf2, padding=10)
 cf2.add(group3, title='Grundlæggende Parametre', bootstyle=PRIMARY)
 
+Kommunedata = [
+    "0101: København",
+    "0147: Frederiksberg",
+    "0151: Ballerup",
+    "0153: Brøndby",
+    "0155: Dragør",
+    "0157: Gentofte",
+    "0159: Gladsaxe",
+    "0161: Glostrup",
+    "0163: Herlev",
+    "0165: Albertslund",
+    "0167: Hvidovre",
+    "0169: Høje-Taastrup",
+    "0173: Lyngby-Taarbæk",
+    "0175: Rødovre",
+    "0183: Ishøj",
+    "0185: Tårnby",
+    "0187: Vallensbæk",
+    "0190: Furesø",
+    "0201: Allerød",
+    "0210: Fredensborg",
+    "0217: Helsingør",
+    "0219: Hillerød",
+    "0223: Hørsholm",
+    "0230: Rudersdal",
+    "0240: Egedal",
+    "0250: Frederikssund",
+    "0253: Greve",
+    "0259: Køge",
+    "0260: Halsnæs",
+    "0265: Roskilde",
+    "0269: Solrød",
+    "0270: Gribskov",
+    "0306: Odsherred",
+    "0316: Holbæk",
+    "0320: Faxe",
+    "0326: Kalundborg",
+    "0329: Ringsted",
+    "0330: Slagelse",
+    "0336: Stevns",
+    "0340: Sorø",
+    "0350: Lejre",
+    "0360: Lolland",
+    "0370: Næstved",
+    "0376: Guldborgsund",
+    "0390: Vordingborg",
+    "0400: Bornholm",
+    "0410: Middelfart",
+    "0411: Christiansø",
+    "0420: Assens",
+    "0430: Faaborg-Midtfyn",
+    "0440: Kerteminde",
+    "0450: Nyborg",
+    "0461: Odense",
+    "0479: Svendborg",
+    "0480: Nordfyns",
+    "0482: Langeland",
+    "0492: Ærø",
+    "0510: Haderslev",
+    "0530: Billund",
+    "0540: Sønderborg",
+    "0550: Tønder",
+    "0561: Esbjerg",
+    "0563: Fanø",
+    "0573: Varde",
+    "0575: Vejen",
+    "0580: Aabenraa",
+    "0607: Fredericia",
+    "0615: Horsens",
+    "0621: Kolding",
+    "0630: Vejle",
+    "0657: Herning",
+    "0661: Holstebro",
+    "0665: Lemvig",
+    "0671: Struer",
+    "0706: Syddjurs",
+    "0707: Norddjurs",
+    "0710: Favrskov",
+    "0727: Odder",
+    "0730: Randers",
+    "0740: Silkeborg",
+    "0741: Samsø",
+    "0746: Skanderborg",
+    "0751: Aarhus",
+    "0756: Ikast-Brande",
+    "0760: Ringkøbing-Skjern",
+    "0766: Hedensted",
+    "0773: Morsø",
+    "0779: Skive",
+    "0787: Thisted",
+    "0791: Viborg",
+    "0810: Brønderslev",
+    "0813: Frederikshavn",
+    "0820: Vesthimmerlands",
+    "0825: Læsø",
+    "0840: Rebild",
+    "0846: Mariagerfjord",
+    "0849: Jammerbugt",
+    "0851: Aalborg",
+    "0860: Hjørring",
+    ": ",
+]
+
+value_to_code = {item.split(": ")[1]: item.split(": ")[0] for item in Kommunedata}
+
+def on_select(event):
+    global selected_Komkode
+    selected_Kommune = kommunekode_entry_rest.get()
+    selected_Komkode = value_to_code[selected_Kommune]
+    print("Selected Value:", selected_Kommune)
+    print("Corresponding Code:", selected_Komkode)
+
 kommunekode_label_rest = ttk.Label(group3, text="Kommunekode:")
 kommunekode_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
-kommunekode_entry_rest = ttk.Entry(group3, width=30)
+kommunekode_entry_rest = ttk.Combobox(group3, values=[item.split(": ")[1] for item in Kommunedata], width=30)
+kommunekode_entry_rest.bind("<<ComboboxSelected>>", on_select)
 kommunekode_entry_rest.grid(row=0, column=1, padx=5, pady=5)
 
 BFENummer_label_rest = ttk.Label(group3, text="BFE Nummer:")
@@ -411,10 +526,19 @@ BFENummer_label_rest.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
 BFENummer_entry_rest = ttk.Entry(group3, width=30)
 BFENummer_entry_rest.grid(row=1, column=1, padx=5, pady=5)
 
+def MedDybdeFunc():
+    global MedDybde_check_Tell  # Declare new_variable as global to access it outside the function
+    if MedDybde_var.get() == 1:
+        MedDybde_check_Tell = "True"
+    else:
+        MedDybde_check_Tell = "False"
+
+MedDybde_var = tk.IntVar()
 MedDybde_label_rest = ttk.Label(group3, text="Medtag Nested elementer (Etage, Opgang m.m.):")
 MedDybde_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
-MedDybde_check_rest = ttk.Checkbutton(group3, bootstyle="PRIMARY-round-toggle")
+MedDybde_check_rest = ttk.Checkbutton(group3, bootstyle="PRIMARY-round-toggle", variable=MedDybde_var, onvalue=1, offvalue=0,command=MedDybdeFunc)
 MedDybde_check_rest.grid(row=2, column=1, padx=5, pady=5)
+MedDybde_check_rest.invoke()
 
 # Advancerede parametre
 group4 = ttk.Frame(cf2, padding=10)
@@ -425,13 +549,12 @@ pagesize_label_rest = ttk.Label(group4, text="Maks data per side:")
 pagesize_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 pagesize_entry_rest = ttk.Entry(group4, width=30)
 pagesize_entry_rest.grid(row=0, column=1, padx=5, pady=5)
-pagesize_entry_rest.insert(0, '9999999')  # Default value
+pagesize_entry_rest.insert(0, '100')
 
 page_label_rest = ttk.Label(group4, text="Side:")
 page_label_rest.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
 page_entry_rest = ttk.Entry(group4, width=30)
 page_entry_rest.grid(row=1, column=1, padx=5, pady=5)
-page_entry_rest.insert(0, '')  # Default value
 
 id_label_rest = ttk.Label(group4, text="ID:")
 id_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
@@ -568,9 +691,18 @@ PeriodeaendringTil_label_rest.grid(row=28, column=0, padx=5, pady=5, sticky=tk.W
 PeriodeaendringTil_date_rest = ttk.Entry(group4, width=30)
 PeriodeaendringTil_date_rest.grid(row=28, column=1, padx=5, pady=5)
 
-KunNyesteIPeriode_label_rest = ttk.Label(group4, text="BFE Nummer:")
+def KunNyesteIPeriodeFunc():
+    global KunNyesteIPeriode_check_Tell
+    if KunNyesteIPeriode_var.get() == 1:
+        KunNyesteIPeriode_check_Tell = "True"
+    else:
+        KunNyesteIPeriode_check_Tell = "False"
+
+KunNyesteIPeriode_var = tk.IntVar()
+
+KunNyesteIPeriode_label_rest = ttk.Label(group4, text="Kun versioner af dataobjekterne (Kun i forbindelse med Periodeændring):")
 KunNyesteIPeriode_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
-MedDybde_check_rest = ttk.Checkbutton(group4, bootstyle="PRIMARY-round-toggle")
+KunNyesteIPeriode_check_rest = ttk.Checkbutton(group4, bootstyle="PRIMARY-round-toggle", variable=KunNyesteIPeriode_var, onvalue=1, offvalue=0,command=KunNyesteIPeriodeFunc)
 KunNyesteIPeriode_check_rest.grid(row=29, column=1, padx=5, pady=5)
 
 #Konventering
