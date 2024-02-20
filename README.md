@@ -20,7 +20,7 @@ If this makes you uncomftable you can run the application yourself in the follow
  2) run the command ```conda install geopandas pyogrio -y```
  3) Run the command ```pip install ttkbootstrap -y```
 
-   * ttkbootstrap does not have a package in the conda or condaforge systems which is why we must install it using pip
+      * ttkbootstrap does not have a package in the conda or condaforge systems which is why we must install it using pip
 
  4) Navigate to the directory in which you have placed the BBR2GeoPackage.py Directory alongside its 'Resources' folder
     
