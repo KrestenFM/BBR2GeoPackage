@@ -146,7 +146,7 @@ def convert_rest():
         'Vest': Vest_entry_rest.get(),
         'PeriodeaendringFra': PeriodeaendringFra_date_rest.get(),
         'PeriodeaendringTil': PeriodeaendringTil_date_rest.get(),
-#        'KunNyesteIPeriode': KunNyesteIPeriode_check_Tell,
+        'KunNyesteIPeriode': KunNyesteIPeriode_check_Tell,
         'format': 'json',
     }
 
@@ -539,22 +539,25 @@ MedDybde_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
 MedDybde_check_rest = ttk.Checkbutton(group3, bootstyle="PRIMARY-round-toggle", variable=MedDybde_var, onvalue=1, offvalue=0,command=MedDybdeFunc)
 MedDybde_check_rest.grid(row=2, column=1, padx=5, pady=5)
 MedDybde_check_rest.invoke()
+MedDybde_check_rest.invoke()
 
 # Advancerede parametre
 group4 = ttk.Frame(cf2, padding=10)
 cf2.add(group4, title='Advancerede Parametre', bootstyle=PRIMARY, is_collapsed=True)
-scrollbar1 = tk.Scrollbar(group4)
+ToolTip(group4,"Ændre kun i disse instillinger hvis du ved hvad du laver", bootstyle="PRIMARY-INVERSE")
 
 pagesize_label_rest = ttk.Label(group4, text="Maks data per side:")
 pagesize_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 pagesize_entry_rest = ttk.Entry(group4, width=30)
 pagesize_entry_rest.grid(row=0, column=1, padx=5, pady=5)
-pagesize_entry_rest.insert(0, '100')
+pagesize_entry_rest.insert(0, '100000')
+ToolTip(pagesize_label_rest,"Maks systemet kan håndtere er 100.000, for størrere kommuner anvend sider.", bootstyle="PRIMARY-INVERSE")
 
 page_label_rest = ttk.Label(group4, text="Side:")
 page_label_rest.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
 page_entry_rest = ttk.Entry(group4, width=30)
 page_entry_rest.grid(row=1, column=1, padx=5, pady=5)
+page_entry_rest.insert(0, '1')
 
 id_label_rest = ttk.Label(group4, text="ID:")
 id_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
@@ -700,10 +703,13 @@ def KunNyesteIPeriodeFunc():
 
 KunNyesteIPeriode_var = tk.IntVar()
 
-KunNyesteIPeriode_label_rest = ttk.Label(group4, text="Kun versioner af dataobjekterne (Kun i forbindelse med Periodeændring):")
+KunNyesteIPeriode_label_rest = ttk.Label(group4, text="Kun nyeste version af dataobjekterne:")
 KunNyesteIPeriode_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
 KunNyesteIPeriode_check_rest = ttk.Checkbutton(group4, bootstyle="PRIMARY-round-toggle", variable=KunNyesteIPeriode_var, onvalue=1, offvalue=0,command=KunNyesteIPeriodeFunc)
 KunNyesteIPeriode_check_rest.grid(row=29, column=1, padx=5, pady=5)
+KunNyesteIPeriode_check_rest.invoke()
+KunNyesteIPeriode_check_rest.invoke()
+ToolTip(KunNyesteIPeriode_label_rest,"Kun relevant i forbindelse med brug af Periodeændring", bootstyle="PRIMARY-INVERSE")
 
 #Konventering
 
@@ -719,5 +725,6 @@ output_button_rest.grid(row=0, column=2, padx=5, pady=5)
 
 convert_button_rest = ttk.Button(group5, text="Konverter", command=convert_rest)
 convert_button_rest.grid(row=1, column=1, padx=5, pady=5)
+ToolTip(convert_button_rest,"Programmet vil fryse, afvent konventering", bootstyle="PRIMARY-INVERSE")
 
 root.mainloop()
