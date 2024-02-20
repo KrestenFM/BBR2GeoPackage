@@ -7,7 +7,7 @@ The software was primarily created for use by the students, faculty and alumni o
 Notice that the packages geopandas, pyogrio, ttkbootstrap and requests are required for the python script, BBR2GeoPackage.py, to run.
 
 
-# Running the script yourself
+## Running the script yourself
 
 The executable has no requirements, but due to a lack of Windows certification and being compiled by Pyinstaller, it is considered "unsafe" by the OS and a false positive trojan can appear.
 If this makes you uncomftable you can run the application yourself in the following steps. 
