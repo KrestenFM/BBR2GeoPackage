@@ -18,7 +18,7 @@ If this makes you uncomftable you can run the application yourself in the follow
     
       * Run the command ```conda activate [ENV_NAME]```
  2) run the command ```conda install geopandas pyogrio requests darkdetect -y```
- 3) Run the command ```pip install ttkbootstrap -y```
+ 3) Run the command ```pip install ttkbootstrap```
 
       * ttkbootstrap does not have a package in the conda or condaforge systems which is why we must install it using pip
 
