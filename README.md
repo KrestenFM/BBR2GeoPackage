@@ -4,7 +4,7 @@
 A repository for the conversion software between BBR Bygning from the datafordeler.dk REST API JSON output and the GeoPackage format.
 The software was primarily created for use by the students, faculty and alumni of the Department of Sustainability and Planning at AAU - Aalborg University.
 
-Notice that the packages geopandas, pyogrio, ttkbootstrap and requests are required for the python script, BBR2GeoPackage.py, to run.
+Notice that the packages darkdetect, geopandas, pyogrio, ttkbootstrap and requests are required for the python script, BBR2GeoPackage.py, to run.
 
 
 ## Running the script yourself
@@ -17,7 +17,7 @@ If this makes you uncomftable you can run the application yourself in the follow
       * If you havent allready run the command ```conda create [ENV_NAME]```
     
       * Run the command ```conda activate [ENV_NAME]```
- 2) run the command ```conda install geopandas pyogrio -y```
+ 2) run the command ```conda install geopandas pyogrio requests darkdetect -y```
  3) Run the command ```pip install ttkbootstrap -y```
 
       * ttkbootstrap does not have a package in the conda or condaforge systems which is why we must install it using pip
