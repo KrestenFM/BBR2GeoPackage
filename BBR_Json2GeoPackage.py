@@ -6,13 +6,21 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import geopandas as gpd
 import requests
+import darkdetect as dd
+
+
+
 #import pyi_splash
+from darkdetect import isDark
+from ttkbootstrap import Style
 from pathlib import Path
-from tkinter import filedialog, messagebox
+from datetime import datetime
+from tkinter import filedialog, StringVar
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from ttkbootstrap.tooltip import ToolTip
 from ttkbootstrap.style import Bootstyle
+from ttkbootstrap.dialogs.dialogs import Messagebox
 
 gpd.options.io_engine = "pyogrio"
 
@@ -69,26 +77,26 @@ def convert_local():
     output_file = output_entry.get()
 
     if not input_file:
-        messagebox.showerror("Error", "Vælg venligst en input fil.")
+        Messagebox.show_error("Error", "Vælg venligst en input fil.")
         return
 
     try:
         with open(input_file, "r", encoding='utf-8') as f:
             input_data = json.load(f)
     except FileNotFoundError:
-        messagebox.showerror("Error", "Ingen Input fil fundet.")
+        Messagebox.show_error("Error", "Ingen Input fil fundet.")
         return
     except json.JSONDecodeError:
-        messagebox.showerror("Error", "Invalid JSON format i input fil.")
+        Messagebox.show_error("Error", "Invalid JSON format i input fil.")
         return
 
     geojson_output = convert_to_geojson(input_data)
 
     try:
         convert_to_geopackage(geojson_output, output_file)
-        messagebox.showinfo("Success", "Konvertering til GeoPackage fuldført.")
+        Messagebox.show_info("Success", "Konvertering til GeoPackage fuldført.")
     except Exception as e:
-        messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
+        Messagebox.show_error("Fejl", f"En fejl er opstået: {str(e)}")
         
 import requests
 
@@ -120,18 +128,18 @@ def convert_rest():
         'pagesize': pagesize_entry_rest.get(),
         'page': page_entry_rest.get(),
         'Id': id_entry_rest.get(),
-        'VirkningFra': VirkningFra_date_rest.get(),
-        'VirkningTil': VirkningTil_date_rest.get(),
+        'VirkningFra': VirkningFra_date_Format,
+        'VirkningTil': VirkningTil_date_Format,
         'Virkningsaktoer': Virkningsaktoer_entry_rest.get(),
-        'RegistreringFra': RegistreringFra_date_rest.get(),
-        'RegistreringTil': RegistreringTil_date_rest.get(),
+        'RegistreringFra': RegistreringFra_date_Format,
+        'RegistreringTil': RegistreringTil_date_Format,
         'Registreringsaktoer': Registreringsaktoer_entry_rest.get(),
         'Status': Status_entry_rest.get(),
         'Forretningsproces': Forretningsproces_entry_rest.get(),
         'Forretningsomraade': Forretningsomraade_entry_rest.get(),
         'Forretningshaendelse': Forretningshaendelse_entry_rest.get(),
-        'DAFTimestampFra': DAFTimestampFra_date_rest.get(),
-        'DAFTimestampTil': DAFTimestampTil_date_rest.get(),
+        'DAFTimestampFra': DAFTimestampFra_date_Format,
+        'DAFTimestampTil': DAFTimestampTil_date_Format,
         'Etage': Etage_entry_rest.get(),
         'Fordelingsareal': Fordelingsareal_entry_rest.get(),
         'Opgang': Opgang_entry_rest.get(),
@@ -144,8 +152,8 @@ def convert_rest():
         'Syd': Opgang_entry_rest.get(),
         'Oest': Oest_entry_rest.get(),
         'Vest': Vest_entry_rest.get(),
-        'PeriodeaendringFra': PeriodeaendringFra_date_rest.get(),
-        'PeriodeaendringTil': PeriodeaendringTil_date_rest.get(),
+        'PeriodeaendringFra': PeriodeaendringFra_date_Format,
+        'PeriodeaendringTil': PeriodeaendringTil_date_Format,
         'KunNyesteIPeriode': KunNyesteIPeriode_check_Tell,
         'format': 'json',
     }
@@ -157,17 +165,21 @@ def convert_rest():
         geojson_output = convert_to_geojson(input_data)
         try:
             convert_to_geopackage(geojson_output, output_entry_rest.get())
-            messagebox.showinfo("Success", "Konvertering til GeoPackage fuldført.")
+            Messagebox.show_info("Success", "Konvertering til GeoPackage fuldført.")
         except Exception as e:
-            messagebox.showerror("Fejl", f"En fejl er opstået: {str(e)}")
+            Messagebox.show_error("Fejl", f"En fejl er opstået: {str(e)}")
 
 # Create GUI
 #pyi_splash.close()
 
 IMG_PATH = Path(__file__).parent / 'Resources'
 
-root = ttk.Window(themename="litera",iconphoto='bbr2gp.png')
-root.title("JSON to GeoPackage Converter")
+
+initial_theme = 'darkly' if isDark() else 'sandstone'
+
+root = ttk.Window(themename=initial_theme)
+root.title("BBR2GeoPackage")
+
 
 #Collapsing Frame
 
@@ -175,7 +187,7 @@ root.title("JSON to GeoPackage Converter")
 
 
 class CollapsingFrame(ttk.Frame):
-    """A collapsible frame widget that opens and closes with a click."""
+
 
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -192,22 +204,7 @@ class CollapsingFrame(ttk.Frame):
         
 
     def add(self, child, title="", bootstyle=PRIMARY, is_collapsed=False, **kwargs):
-        """Add a child to the collapsible frame
 
-        Parameters:
-
-            child (Frame):
-                The child frame to add to the widget.
-
-            title (str):
-                The title appearing on the collapsible section header.
-
-            bootstyle (str):
-                The style to apply to the collapsible section header.
-
-            **kwargs (Dict):
-                Other optional keyword arguments.
-        """
         if child.winfo_class() != 'TFrame':
             return
 
@@ -250,14 +247,7 @@ class CollapsingFrame(ttk.Frame):
             child.btn.configure(image=self.images[0])
 
     def _toggle_open_close(self, child):
-        """Open or close the section and change the toggle button 
-        image accordingly.
 
-        Parameters:
-
-            child (Frame):
-                The child element to add or remove from grid manager.
-        """
         if child.winfo_viewable():
             child.grid_remove()
             child.btn.configure(image=self.images[1])
@@ -266,7 +256,7 @@ class CollapsingFrame(ttk.Frame):
             child.btn.configure(image=self.images[0])
 
 class CollapsingFrame2(ttk.Frame):
-    """A collapsible frame widget that opens and closes with a click."""
+
 
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -275,22 +265,7 @@ class CollapsingFrame2(ttk.Frame):
         
 
     def add(self, child, title="", bootstyle=PRIMARY, **kwargs):
-        """Add a child to the collapsible frame
 
-        Parameters:
-
-            child (Frame):
-                The child frame to add to the widget.
-
-            title (str):
-                The title appearing on the collapsible section header.
-
-            bootstyle (str):
-                The style to apply to the collapsible section header.
-
-            **kwargs (Dict):
-                Other optional keyword arguments.
-        """
         if child.winfo_class() != 'TFrame':
             return
 
@@ -325,14 +300,7 @@ class CollapsingFrame2(ttk.Frame):
         self.cumulative_rows += 2
 
     def _toggle_open_close(self, child):
-        """Open or close the section and change the toggle button 
-        image accordingly.
 
-        Parameters:
-
-            child (Frame):
-                The child element to add or remove from grid manager.
-        """
         if child.winfo_viewable():
             child.grid_remove()
         else:
@@ -404,6 +372,7 @@ group3 = ttk.Frame(cf2, padding=10)
 cf2.add(group3, title='Grundlæggende Parametre', bootstyle=PRIMARY)
 
 Kommunedata = [
+    ": ",
     "0101: København",
     "0147: Frederiksberg",
     "0151: Ballerup",
@@ -503,7 +472,6 @@ Kommunedata = [
     "0849: Jammerbugt",
     "0851: Aalborg",
     "0860: Hjørring",
-    ": ",
 ]
 
 value_to_code = {item.split(": ")[1]: item.split(": ")[0] for item in Kommunedata}
@@ -512,19 +480,12 @@ def on_select(event):
     global selected_Komkode
     selected_Kommune = kommunekode_entry_rest.get()
     selected_Komkode = value_to_code[selected_Kommune]
-    print("Selected Value:", selected_Kommune)
-    print("Corresponding Code:", selected_Komkode)
 
 kommunekode_label_rest = ttk.Label(group3, text="Kommunekode:")
 kommunekode_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 kommunekode_entry_rest = ttk.Combobox(group3, values=[item.split(": ")[1] for item in Kommunedata], width=30)
 kommunekode_entry_rest.bind("<<ComboboxSelected>>", on_select)
 kommunekode_entry_rest.grid(row=0, column=1, padx=5, pady=5)
-
-BFENummer_label_rest = ttk.Label(group3, text="BFE Nummer:")
-BFENummer_label_rest.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
-BFENummer_entry_rest = ttk.Entry(group3, width=30)
-BFENummer_entry_rest.grid(row=1, column=1, padx=5, pady=5)
 
 def MedDybdeFunc():
     global MedDybde_check_Tell  # Declare new_variable as global to access it outside the function
@@ -534,17 +495,17 @@ def MedDybdeFunc():
         MedDybde_check_Tell = "False"
 
 MedDybde_var = tk.IntVar()
-MedDybde_label_rest = ttk.Label(group3, text="Medtag Nested elementer (Etage, Opgang m.m.):")
+MedDybde_label_rest = ttk.Label(group3, text="Medtag Nested elementer:")
 MedDybde_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
 MedDybde_check_rest = ttk.Checkbutton(group3, bootstyle="PRIMARY-round-toggle", variable=MedDybde_var, onvalue=1, offvalue=0,command=MedDybdeFunc)
 MedDybde_check_rest.grid(row=2, column=1, padx=5, pady=5)
+ToolTip(MedDybde_label_rest, "Etage, Opgang m.m.", bootstyle="PRIMARY-INVERSE")
 MedDybde_check_rest.invoke()
 MedDybde_check_rest.invoke()
 
 # Advancerede parametre
 group4 = ttk.Frame(cf2, padding=10)
 cf2.add(group4, title='Advancerede Parametre', bootstyle=PRIMARY, is_collapsed=True)
-ToolTip(group4,"Ændre kun i disse instillinger hvis du ved hvad du laver", bootstyle="PRIMARY-INVERSE")
 
 pagesize_label_rest = ttk.Label(group4, text="Maks data per side:")
 pagesize_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
@@ -559,140 +520,326 @@ page_entry_rest = ttk.Entry(group4, width=30)
 page_entry_rest.grid(row=1, column=1, padx=5, pady=5)
 page_entry_rest.insert(0, '1')
 
+BFENummer_label_rest = ttk.Label(group4, text="BFE Nummer:")
+BFENummer_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+BFENummer_entry_rest = ttk.Entry(group4, width=30)
+BFENummer_entry_rest.grid(row=2, column=1, padx=5, pady=5)
+
 id_label_rest = ttk.Label(group4, text="ID:")
-id_label_rest.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+id_label_rest.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
 id_entry_rest = ttk.Entry(group4, width=30)
-id_entry_rest.grid(row=2, column=1, padx=5, pady=5)
+id_entry_rest.grid(row=3, column=1, padx=5, pady=5)
 
+global VirkningFra_date_Format
+VirkningFra_date_Format = ""
+
+def update_VirkningFra(VirkningFra_Var):
+    global VirkningFra_date_Format
+    Virkning_Fra_selected_date = VirkningFra_Var.get()
+    if Virkning_Fra_selected_date == "":
+        return
+    VirkningFra_date_rest.entry.delete(0, END)
+    VirkningFra_date_object = datetime.strptime(Virkning_Fra_selected_date, "%d-%m-%Y")
+    VirkningFra_date_Format = VirkningFra_date_object.strftime("%Y-%m-%d")
+    VirkningFra_date_rest.entry.insert(0, VirkningFra_date_Format)
+    
+def ClearVirkFraFunc():
+    VirkningFra_date_rest.entry.delete(0, END)
+
+  
+VirkningFra_Var = StringVar()
 VirkningFra_label_rest = ttk.Label(group4, text="Virkning fra:")
-VirkningFra_label_rest.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
-VirkningFra_date_rest = ttk.Entry(group4, width=30)
-VirkningFra_date_rest.grid(row=3, column=1, padx=5, pady=5)
+VirkningFra_label_rest.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
+VirkningFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+VirkningFra_date_rest.grid(row=4, column=1, padx=5, pady=5)
+VirkningFra_date_rest.entry.configure(textvariable=VirkningFra_Var)
+VirkningFra_date_rest.entry.delete(0, END)
+VirkningFra_Var.trace("w", lambda name, index, mode, VirkningFra_Var=VirkningFra_Var: update_VirkningFra(VirkningFra_Var))
+VirkningFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearVirkFraFunc, bootstyle="PRIMARY")
+VirkningFra_Button_rest.grid(row=4, column=2, padx=5, pady=5)
 
+global VirkningTil_date_Format
+VirkningTil_date_Format = ""
+
+def update_VirkningTil(VirkningTil_Var):
+    global VirkningTil_date_Format
+    Virkning_Til_selected_date = VirkningTil_Var.get()
+    if Virkning_Til_selected_date == "":
+        return
+    VirkningTil_date_rest.entry.delete(0, END)
+    VirkningTil_date_object = datetime.strptime(Virkning_Til_selected_date, "%d-%m-%Y")
+    VirkningTil_date_Format = VirkningTil_date_object.strftime("%Y-%m-%d")
+    VirkningTil_date_rest.entry.insert(0, VirkningTil_date_Format)
+    
+def ClearVirkTilFunc():
+    VirkningTil_date_rest.entry.delete(0, END)
+
+VirkningTil_Var = StringVar()
 VirkningTil_label_rest = ttk.Label(group4, text="Virkning til:")
-VirkningTil_label_rest.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
-VirkningTil_date_rest = ttk.Entry(group4, width=30)
-VirkningTil_date_rest.grid(row=4, column=1, padx=5, pady=5)
+VirkningTil_label_rest.grid(row=5, column=0, padx=5, pady=5, sticky=tk.W)
+VirkningTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+VirkningTil_date_rest.grid(row=5, column=1, padx=5, pady=5)
+VirkningTil_date_rest.entry.configure(textvariable=VirkningTil_Var)
+VirkningTil_date_rest.entry.delete(0, END)
+VirkningTil_Var.trace("w", lambda name, index, mode, VirkningTil_Var=VirkningTil_Var: update_VirkningTil(VirkningTil_Var))
+VirkningTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearVirkTilFunc, bootstyle="PRIMARY")
+VirkningTil_Button_rest.grid(row=5, column=2, padx=5, pady=5)
 
 Virkningsaktoer_label_rest = ttk.Label(group4, text="Virknings aktør:")
-Virkningsaktoer_label_rest.grid(row=5, column=0, padx=5, pady=5, sticky=tk.W)
+Virkningsaktoer_label_rest.grid(row=6, column=0, padx=5, pady=5, sticky=tk.W)
 Virkningsaktoer_entry_rest = ttk.Entry(group4, width=30)
-Virkningsaktoer_entry_rest.grid(row=5, column=1, padx=5, pady=5)
+Virkningsaktoer_entry_rest.grid(row=6, column=1, padx=5, pady=5)
 
+global RegistreringFra_date_Format
+RegistreringFra_date_Format = ""
+
+def update_RegistreringFra(RegistreringFra_Var):
+    global RegistreringFra_date_Format
+    Registrering_Fra_selected_date = RegistreringFra_Var.get()
+    if Registrering_Fra_selected_date == "":
+        return
+    RegistreringFra_date_rest.entry.delete(0, END)
+    RegistreringFra_date_object = datetime.strptime(Registrering_Fra_selected_date, "%d-%m-%Y")
+    RegistreringFra_date_Format = RegistreringFra_date_object.strftime("%Y-%m-%d")
+    RegistreringFra_date_rest.entry.insert(0, RegistreringFra_date_Format)
+    
+def ClearRegFraFunc():
+    RegistreringFra_date_rest.entry.delete(0, END)
+
+RegistreringFra_Var = StringVar()
 RegistreringFra_label_rest = ttk.Label(group4, text="Registrering fra:")
-RegistreringFra_label_rest.grid(row=6, column=0, padx=5, pady=5, sticky=tk.W)
-RegistreringFra_date_rest = ttk.Entry(group4, width=30)
-RegistreringFra_date_rest.grid(row=6, column=1, padx=5, pady=5)
+RegistreringFra_label_rest.grid(row=7, column=0, padx=5, pady=5, sticky=tk.W)
+RegistreringFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+RegistreringFra_date_rest.grid(row=7, column=1, padx=5, pady=5)
+RegistreringFra_date_rest.entry.delete(0, END)
+RegistreringFra_date_rest.entry.configure(textvariable=RegistreringFra_Var)
+RegistreringFra_date_rest.entry.delete(0, END)
+RegistreringFra_Var.trace("w", lambda name, index, mode, RegistreringFra_Var=RegistreringFra_Var: update_RegistreringFra(RegistreringFra_Var))
+RegistreringFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearRegFraFunc, bootstyle="PRIMARY")
+RegistreringFra_Button_rest.grid(row=7, column=2, padx=5, pady=5)
 
+global RegistreringTil_date_Format
+RegistreringTil_date_Format = ""
+
+def update_RegistreringTil(RegistreringTil_Var):
+    global RegistreringTil_date_Format
+    Registrering_Til_selected_date = RegistreringTil_Var.get()
+    if Registrering_Til_selected_date == "":
+        return
+    RegistreringTil_date_rest.entry.delete(0, END)
+    RegistreringTil_date_object = datetime.strptime(Registrering_Til_selected_date, "%d-%m-%Y")
+    RegistreringTil_date_Format = RegistreringTil_date_object.strftime("%Y-%m-%d")
+    RegistreringTil_date_rest.entry.insert(0, RegistreringTil_date_Format)
+
+def ClearRegTilFunc():
+    RegistreringTil_date_rest.entry.delete(0, END)
+
+RegistreringTil_Var = StringVar()
 RegistreringTil_label_rest = ttk.Label(group4, text="Registrering til:")
-RegistreringTil_label_rest.grid(row=7, column=0, padx=5, pady=5, sticky=tk.W)
-RegistreringTil_date_rest = ttk.Entry(group4, width=30)
-RegistreringTil_date_rest.grid(row=7, column=1, padx=5, pady=5)
+RegistreringTil_label_rest.grid(row=8, column=0, padx=5, pady=5, sticky=tk.W)
+RegistreringTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+RegistreringTil_date_rest.grid(row=8, column=1, padx=5, pady=5)
+RegistreringTil_date_rest.entry.configure(textvariable=RegistreringTil_Var)
+RegistreringTil_date_rest.entry.delete(0, END)
+RegistreringTil_Var.trace("w", lambda name, index, mode, RegistreringTil_Var=RegistreringTil_Var: update_RegistreringTil(RegistreringTil_Var))
+RegistreringTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearRegTilFunc, bootstyle="PRIMARY")
+RegistreringTil_Button_rest.grid(row=8, column=2, padx=5, pady=5)
+
 
 Registreringsaktoer_label_rest = ttk.Label(group4, text="Registrerings aktør:")
-Registreringsaktoer_label_rest.grid(row=8, column=0, padx=5, pady=5, sticky=tk.W)
+Registreringsaktoer_label_rest.grid(row=9, column=0, padx=5, pady=5, sticky=tk.W)
 Registreringsaktoer_entry_rest = ttk.Entry(group4, width=30)
-Registreringsaktoer_entry_rest.grid(row=8, column=1, padx=5, pady=5)
+Registreringsaktoer_entry_rest.grid(row=9, column=1, padx=5, pady=5)
 
 Status_label_rest = ttk.Label(group4, text="Bygningsstatus:")
-Status_label_rest.grid(row=9, column=0, padx=5, pady=5, sticky=tk.W)
+Status_label_rest.grid(row=10, column=0, padx=5, pady=5, sticky=tk.W)
 Status_entry_rest = ttk.Entry(group4, width=30)
-Status_entry_rest.grid(row=9, column=1, padx=5, pady=5)
+Status_entry_rest.grid(row=10, column=1, padx=5, pady=5)
 
 Forretningsproces_label_rest = ttk.Label(group4, text="Forretningsproces:")
-Forretningsproces_label_rest.grid(row=10, column=0, padx=5, pady=5, sticky=tk.W)
+Forretningsproces_label_rest.grid(row=11, column=0, padx=5, pady=5, sticky=tk.W)
 Forretningsproces_entry_rest = ttk.Entry(group4, width=30)
-Forretningsproces_entry_rest.grid(row=10, column=1, padx=5, pady=5)
+Forretningsproces_entry_rest.grid(row=11, column=1, padx=5, pady=5)
 
 Forretningsomraade_label_rest = ttk.Label(group4, text="Forretningsområde:")
-Forretningsomraade_label_rest.grid(row=11, column=0, padx=5, pady=5, sticky=tk.W)
+Forretningsomraade_label_rest.grid(row=12, column=0, padx=5, pady=5, sticky=tk.W)
 Forretningsomraade_entry_rest = ttk.Entry(group4, width=30)
-Forretningsomraade_entry_rest.grid(row=11, column=1, padx=5, pady=5)
+Forretningsomraade_entry_rest.grid(row=12, column=1, padx=5, pady=5)
 
 Forretningshaendelse_label_rest = ttk.Label(group4, text="Forretningshændelse:")
-Forretningshaendelse_label_rest.grid(row=12, column=0, padx=5, pady=5, sticky=tk.W)
+Forretningshaendelse_label_rest.grid(row=13, column=0, padx=5, pady=5, sticky=tk.W)
 Forretningshaendelse_entry_rest = ttk.Entry(group4, width=30)
-Forretningshaendelse_entry_rest.grid(row=12, column=1, padx=5, pady=5)
+Forretningshaendelse_entry_rest.grid(row=13, column=1, padx=5, pady=5)
 
+global DAFTimestampFra_date_Format
+DAFTimestampFra_date_Format = ""
+
+def update_DAFTimestampFra(DAFTimestampFra_Var):
+    global DAFTimestampFra_date_Format
+    DAFTimestamp_Fra_selected_date = DAFTimestampFra_Var.get()
+    if DAFTimestamp_Fra_selected_date == "":
+        return
+    DAFTimestampFra_date_rest.entry.delete(0, END)
+    DAFTimestampFra_date_object = datetime.strptime(DAFTimestamp_Fra_selected_date, "%d-%m-%Y")
+    DAFTimestampFra_date_Format = DAFTimestampFra_date_object.strftime("%Y-%m-%d")
+    DAFTimestampFra_date_rest.entry.insert(0, DAFTimestampFra_date_Format)
+
+def ClearDAFTimestampFraFunc():
+    DAFTimestampFra_date_rest.entry.delete(0, END)
+
+DAFTimestampFra_Var = StringVar()
 DAFTimestampFra_label_rest = ttk.Label(group4, text="Datafordeler opdateringstidspunkt til:")
-DAFTimestampFra_label_rest.grid(row=13, column=0, padx=5, pady=5, sticky=tk.W)
-DAFTimestampFra_date_rest = ttk.Entry(group4, width=30)
-DAFTimestampFra_date_rest.grid(row=13, column=1, padx=5, pady=5)
+DAFTimestampFra_label_rest.grid(row=14, column=0, padx=5, pady=5, sticky=tk.W)
+DAFTimestampFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+DAFTimestampFra_date_rest.grid(row=14, column=1, padx=5, pady=5)
+DAFTimestampFra_date_rest.entry.configure(textvariable=DAFTimestampFra_Var)
+DAFTimestampFra_date_rest.entry.delete(0, END)
+DAFTimestampFra_Var.trace("w", lambda name, index, mode, DAFTimestampFra_Var=DAFTimestampFra_Var: update_DAFTimestampFra(DAFTimestampFra_Var))
+DAFTimestampFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearDAFTimestampFraFunc, bootstyle="PRIMARY")
+DAFTimestampFra_Button_rest.grid(row=14, column=2, padx=5, pady=5)
 
+global DAFTimestampTil_date_Format
+DAFTimestampTil_date_Format = ""
+
+def update_DAFTimestampTil(DAFTimestampTil_Var):
+    global DAFTimestampTil_date_Format
+    DAFTimestamp_Til_selected_date = DAFTimestampTil_Var.get()
+    if DAFTimestamp_Til_selected_date == "":
+        return
+    DAFTimestampTil_date_rest.entry.delete(0, END)
+    DAFTimestampTil_date_object = datetime.strptime(DAFTimestamp_Til_selected_date, "%d-%m-%Y")
+    DAFTimestampTil_date_Format = DAFTimestampTil_date_object.strftime("%Y-%m-%d")
+    DAFTimestampTil_date_rest.entry.insert(0, DAFTimestampTil_date_Format)
+
+def ClearDAFTimestampTilFunc():
+    DAFTimestampTil_date_rest.entry.delete(0, END)
+
+DAFTimestampTil_Var = StringVar()
 DAFTimestampTil_label_rest = ttk.Label(group4, text="Datafordeler opdateringstidspunkt fil:")
-DAFTimestampTil_label_rest.grid(row=14, column=0, padx=5, pady=5, sticky=tk.W)
-DAFTimestampTil_date_rest = ttk.Entry(group4, width=30)
-DAFTimestampTil_date_rest.grid(row=14, column=1, padx=5, pady=5)
+DAFTimestampTil_label_rest.grid(row=15, column=0, padx=5, pady=5, sticky=tk.W)
+DAFTimestampTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+DAFTimestampTil_date_rest.grid(row=15, column=1, padx=5, pady=5)
+DAFTimestampTil_date_rest.entry.configure(textvariable=DAFTimestampTil_Var)
+DAFTimestampTil_date_rest.entry.delete(0, END)
+DAFTimestampTil_Var.trace("w", lambda name, index, mode, DAFTimestampTil_Var=DAFTimestampTil_Var: update_DAFTimestampTil(DAFTimestampTil_Var))
+DAFTimestampTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearDAFTimestampTilFunc, bootstyle="PRIMARY")
+DAFTimestampTil_Button_rest.grid(row=15, column=2, padx=5, pady=5)
+
 
 Etage_label_rest = ttk.Label(group4, text="BBR Etage ID:")
-Etage_label_rest.grid(row=15, column=0, padx=5, pady=5, sticky=tk.W)
+Etage_label_rest.grid(row=16, column=0, padx=5, pady=5, sticky=tk.W)
 Etage_entry_rest = ttk.Entry(group4, width=30)
-Etage_entry_rest.grid(row=15, column=1, padx=5, pady=5)
+Etage_entry_rest.grid(row=16, column=1, padx=5, pady=5)
 
 Fordelingsareal_label_rest = ttk.Label(group4, text="BBR Fordelingsareal ID:")
-Fordelingsareal_label_rest.grid(row=16, column=0, padx=5, pady=5, sticky=tk.W)
+Fordelingsareal_label_rest.grid(row=17, column=0, padx=5, pady=5, sticky=tk.W)
 Fordelingsareal_entry_rest = ttk.Entry(group4, width=30)
-Fordelingsareal_entry_rest.grid(row=16, column=1, padx=5, pady=5)
+Fordelingsareal_entry_rest.grid(row=17, column=1, padx=5, pady=5)
 
 Opgang_label_rest = ttk.Label(group4, text="BBR Opgang ID:")
-Opgang_label_rest.grid(row=17, column=0, padx=5, pady=5, sticky=tk.W)
+Opgang_label_rest.grid(row=18, column=0, padx=5, pady=5, sticky=tk.W)
 Opgang_entry_rest = ttk.Entry(group4, width=30)
-Opgang_entry_rest.grid(row=17, column=1, padx=5, pady=5)
+Opgang_entry_rest.grid(row=18, column=1, padx=5, pady=5)
 
 TekniskAnlaeg_label_rest = ttk.Label(group4, text="BBR Teknisk Anlæg ID:")
-TekniskAnlaeg_label_rest.grid(row=18, column=0, padx=5, pady=5, sticky=tk.W)
+TekniskAnlaeg_label_rest.grid(row=19, column=0, padx=5, pady=5, sticky=tk.W)
 TekniskAnlaeg_entry_rest = ttk.Entry(group4, width=30)
-TekniskAnlaeg_entry_rest.grid(row=18, column=1, padx=5, pady=5)
+TekniskAnlaeg_entry_rest.grid(row=19, column=1, padx=5, pady=5)
 
 Grund_label_rest = ttk.Label(group4, text="BBR Grund ID:")
-Grund_label_rest.grid(row=19, column=0, padx=5, pady=5, sticky=tk.W)
+Grund_label_rest.grid(row=20, column=0, padx=5, pady=5, sticky=tk.W)
 Grund_entry_rest = ttk.Entry(group4, width=30)
-Grund_entry_rest.grid(row=19, column=1, padx=5, pady=5)
+Grund_entry_rest.grid(row=20, column=1, padx=5, pady=5)
 
-Jordstykke_label_rest = ttk.Label(group4, text="BBR Jordstykke ID:")
-Jordstykke_label_rest.grid(row=20, column=0, padx=5, pady=5, sticky=tk.W)
+Jordstykke_label_rest = ttk.Label(group4, text="MU Jordstykke ID:")
+Jordstykke_label_rest.grid(row=21, column=0, padx=5, pady=5, sticky=tk.W)
 Jordstykke_entry_rest = ttk.Entry(group4, width=30)
-Jordstykke_entry_rest.grid(row=20, column=1, padx=5, pady=5)
+Jordstykke_entry_rest.grid(row=21, column=1, padx=5, pady=5)
 
 Ejendomsrelation_label_rest = ttk.Label(group4, text="BBR Ejendomsrelation ID:")
-Ejendomsrelation_label_rest.grid(row=21, column=0, padx=5, pady=5, sticky=tk.W)
+Ejendomsrelation_label_rest.grid(row=22, column=0, padx=5, pady=5, sticky=tk.W)
 Ejendomsrelation_entry_rest = ttk.Entry(group4, width=30)
-Ejendomsrelation_entry_rest.grid(row=21, column=1, padx=5, pady=5)
+Ejendomsrelation_entry_rest.grid(row=22, column=1, padx=5, pady=5)
 
 Husnummer_label_rest = ttk.Label(group4, text="DAR Husnummer ID:")
-Husnummer_label_rest.grid(row=22, column=0, padx=5, pady=5, sticky=tk.W)
+Husnummer_label_rest.grid(row=23, column=0, padx=5, pady=5, sticky=tk.W)
 Husnummer_entry_rest = ttk.Entry(group4, width=30)
-Husnummer_entry_rest.grid(row=22, column=1, padx=5, pady=5)
+Husnummer_entry_rest.grid(row=23, column=1, padx=5, pady=5)
 
 Nord_label_rest = ttk.Label(group4, text="Nordlig koordinat afgrænsning:")
-Nord_label_rest.grid(row=23, column=0, padx=5, pady=5, sticky=tk.W)
+Nord_label_rest.grid(row=24, column=0, padx=5, pady=5, sticky=tk.W)
 Nord_entry_rest = ttk.Entry(group4, width=30)
-Nord_entry_rest.grid(row=23, column=1, padx=5, pady=5)
+Nord_entry_rest.grid(row=24, column=1, padx=5, pady=5)
 
 Syd_label_rest = ttk.Label(group4, text="Sydlig koordinat afgrænsning:")
-Syd_label_rest.grid(row=24, column=0, padx=5, pady=5, sticky=tk.W)
+Syd_label_rest.grid(row=25, column=0, padx=5, pady=5, sticky=tk.W)
 Syd_entry_rest = ttk.Entry(group4, width=30)
-Syd_entry_rest.grid(row=24, column=1, padx=5, pady=5)
+Syd_entry_rest.grid(row=25, column=1, padx=5, pady=5)
 
 Oest_label_rest = ttk.Label(group4, text="Østlig koordinat afgrænsning:")
-Oest_label_rest.grid(row=25, column=0, padx=5, pady=5, sticky=tk.W)
+Oest_label_rest.grid(row=26, column=0, padx=5, pady=5, sticky=tk.W)
 Oest_entry_rest = ttk.Entry(group4, width=30)
-Oest_entry_rest.grid(row=25, column=1, padx=5, pady=5)
+Oest_entry_rest.grid(row=26, column=1, padx=5, pady=5)
 
 Vest_label_rest = ttk.Label(group4, text="Vestlig koordinat afgrænsning:")
-Vest_label_rest.grid(row=26, column=0, padx=5, pady=5, sticky=tk.W)
+Vest_label_rest.grid(row=27, column=0, padx=5, pady=5, sticky=tk.W)
 Vest_entry_rest = ttk.Entry(group4, width=30)
-Vest_entry_rest.grid(row=26, column=1, padx=5, pady=5)
+Vest_entry_rest.grid(row=27, column=1, padx=5, pady=5)
 
+global PeriodeaendringFra_date_Format
+PeriodeaendringFra_date_Format = ""
+
+def update_PeriodeaendringFra(PeriodeaendringFra_Var):
+    global PeriodeaendringFra_date_Format
+    Periodeaendring_Fra_selected_date = PeriodeaendringFra_Var.get()
+    if Periodeaendring_Fra_selected_date == "":
+        return
+    PeriodeaendringFra_date_rest.entry.delete(0, END)
+    PeriodeaendringFra_date_object = datetime.strptime(Periodeaendring_Fra_selected_date, "%d-%m-%Y")
+    PeriodeaendringFra_date_Format = PeriodeaendringFra_date_object.strftime("%Y-%m-%d")
+    PeriodeaendringFra_date_rest.entry.insert(0, PeriodeaendringFra_date_Format)
+
+def ClearPeriodeaendringFraFunc():
+    PeriodeaendringFra_date_rest.entry.delete(0, END)
+
+PeriodeaendringFra_Var = StringVar()
 PeriodeaendringFra_label_rest = ttk.Label(group4, text="Periodeændring fra:")
-PeriodeaendringFra_label_rest.grid(row=27, column=0, padx=5, pady=5, sticky=tk.W)
-PeriodeaendringFra_date_rest = ttk.Entry(group4, width=30)
-PeriodeaendringFra_date_rest.grid(row=27, column=1, padx=5, pady=5)
+PeriodeaendringFra_label_rest.grid(row=28, column=0, padx=5, pady=5, sticky=tk.W)
+PeriodeaendringFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+PeriodeaendringFra_date_rest.grid(row=28, column=1, padx=5, pady=5)
+PeriodeaendringFra_date_rest.entry.configure(textvariable=PeriodeaendringFra_Var)
+PeriodeaendringFra_date_rest.entry.delete(0, END)
+PeriodeaendringFra_Var.trace("w", lambda name, index, mode, PeriodeaendringFra_Var=PeriodeaendringFra_Var: update_PeriodeaendringFra(PeriodeaendringFra_Var))
+PeriodeaendringFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearPeriodeaendringFraFunc, bootstyle="PRIMARY")
+PeriodeaendringFra_Button_rest.grid(row=28, column=2, padx=5, pady=5)
 
+global PeriodeaendringTil_date_Format
+PeriodeaendringTil_date_Format = ""
+
+def update_PeriodeaendringTil(PeriodeaendringTil_Var):
+    global PeriodeaendringTil_date_Format
+    Periodeaendring_Til_selected_date = PeriodeaendringTil_Var.get()
+    if Periodeaendring_Til_selected_date == "":
+        return
+    PeriodeaendringTil_date_rest.entry.delete(0, END)
+    PeriodeaendringTil_date_object = datetime.strptime(Periodeaendring_Til_selected_date, "%d-%m-%Y")
+    PeriodeaendringTil_date_Format = PeriodeaendringTil_date_object.strftime("%Y-%m-%d")
+    PeriodeaendringTil_date_rest.entry.insert(0, PeriodeaendringTil_date_Format)
+
+def ClearPeriodeaendringTilFunc():
+    PeriodeaendringTil_date_rest.entry.delete(0, END)
+
+PeriodeaendringTil_Var = StringVar()
 PeriodeaendringTil_label_rest = ttk.Label(group4, text="Periodeændring Til:")
-PeriodeaendringTil_label_rest.grid(row=28, column=0, padx=5, pady=5, sticky=tk.W)
-PeriodeaendringTil_date_rest = ttk.Entry(group4, width=30)
-PeriodeaendringTil_date_rest.grid(row=28, column=1, padx=5, pady=5)
+PeriodeaendringTil_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
+PeriodeaendringTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+PeriodeaendringTil_date_rest.grid(row=29, column=1, padx=5, pady=5)
+PeriodeaendringTil_date_rest.entry.configure(textvariable=PeriodeaendringTil_Var)
+PeriodeaendringTil_date_rest.entry.delete(0, END)
+PeriodeaendringTil_Var.trace("w", lambda name, index, mode, PeriodeaendringTil_Var=PeriodeaendringTil_Var: update_PeriodeaendringTil(PeriodeaendringTil_Var))
+PeriodeaendringTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearPeriodeaendringTilFunc, bootstyle="PRIMARY")
+PeriodeaendringTil_Button_rest.grid(row=29, column=2, padx=5, pady=5)
+
 
 def KunNyesteIPeriodeFunc():
     global KunNyesteIPeriode_check_Tell
@@ -704,9 +851,9 @@ def KunNyesteIPeriodeFunc():
 KunNyesteIPeriode_var = tk.IntVar()
 
 KunNyesteIPeriode_label_rest = ttk.Label(group4, text="Kun nyeste version af dataobjekterne:")
-KunNyesteIPeriode_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
+KunNyesteIPeriode_label_rest.grid(row=30, column=0, padx=5, pady=5, sticky=tk.W)
 KunNyesteIPeriode_check_rest = ttk.Checkbutton(group4, bootstyle="PRIMARY-round-toggle", variable=KunNyesteIPeriode_var, onvalue=1, offvalue=0,command=KunNyesteIPeriodeFunc)
-KunNyesteIPeriode_check_rest.grid(row=29, column=1, padx=5, pady=5)
+KunNyesteIPeriode_check_rest.grid(row=30, column=1, padx=5, pady=5)
 KunNyesteIPeriode_check_rest.invoke()
 KunNyesteIPeriode_check_rest.invoke()
 ToolTip(KunNyesteIPeriode_label_rest,"Kun relevant i forbindelse med brug af Periodeændring", bootstyle="PRIMARY-INVERSE")
@@ -714,7 +861,7 @@ ToolTip(KunNyesteIPeriode_label_rest,"Kun relevant i forbindelse med brug af Per
 #Konventering
 
 group5 = ttk.Frame(cf3, padding=10)
-cf3.add(group5, title='Konventering', bootstyle=LIGHT)
+cf3.add(group5, title='Konventering', bootstyle=PRIMARY)
 
 output_label_rest = ttk.Label(group5, text="Output GeoPackage fil:")
 output_label_rest.grid(row=0, column=0, padx=5, pady=5, sticky=ttk.W)
