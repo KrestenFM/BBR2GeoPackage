@@ -26,3 +26,8 @@ If this makes you uncomftable you can run the application yourself in the follow
     
       * You can do this using the command    cd [PATH TO DIRECTORY]
  5) Run the command ```Python BBR2GeoPackage.py```
+
+### Current trello board
+
+![billede](https://github.com/KrestenFM/BBRJson2Geopackage/assets/32569116/32120a28-c3ff-43da-b310-46bd40ac3e2f)
+
