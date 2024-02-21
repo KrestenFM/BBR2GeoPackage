@@ -6,13 +6,10 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import geopandas as gpd
 import requests
-import darkdetect as dd
-
-
-
+import darkdetect
 #import pyi_splash
+
 from darkdetect import isDark
-from ttkbootstrap import Style
 from pathlib import Path
 from datetime import datetime
 from tkinter import filedialog, StringVar
