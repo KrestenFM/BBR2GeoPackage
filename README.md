@@ -29,5 +29,6 @@ If this makes you uncomftable you can run the application yourself in the follow
 
 ### Current trello board
 
-![billede](https://github.com/KrestenFM/BBRJson2Geopackage/assets/32569116/32120a28-c3ff-43da-b310-46bd40ac3e2f)
+![billede](https://github.com/KrestenFM/BBRJson2Geopackage/assets/32569116/5874d336-cb83-480a-b965-e351adfff2e3)
+
 
