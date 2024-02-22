@@ -12,7 +12,7 @@ Notice that the packages darkdetect, geopandas, pyogrio, ttkbootstrap and reques
 The executable has no requirements, but due to a lack of Windows certification and being compiled by Pyinstaller, it is considered "unsafe" by the OS and a false positive trojan can appear.
 If this makes you uncomftable you can run the application yourself in the following steps. 
 
- 1) Create a new conda enviroment, i recommend using [Miniforge-pypy3](https://github.com/conda-forge/miniforge) and i will be assuming this or another conda setup is what you are using.
+ 1) Create a new python enviroment, i recommend using [Miniforge-pypy3](https://github.com/conda-forge/miniforge) and i will be assuming this or another conda setup is what you are using.
     
       * If you havent allready run the command ```conda create [ENV_NAME]```
     
