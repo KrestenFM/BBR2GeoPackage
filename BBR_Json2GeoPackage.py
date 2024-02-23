@@ -116,6 +116,57 @@ def remove_empty_values(payload):
     return {k: v for k, v in payload.items() if v}
 
 def convert_rest():
+    
+    VirkningFra_Time = VirkningFra_date_rest.entry.get()
+    if VirkningFra_Time:
+        VirkningFra_date_Format = VirkningFra_Time.strftime('%Y-%m-%d')
+    else:
+        VirkningFra_date_Format = ""
+
+    VirkningTil_Time = VirkningTil_date_rest.entry.get()
+    if VirkningTil_Time:
+        VirkningTil_date_Format = VirkningTil_Time.strftime('%Y-%m-%d')
+    else:
+        VirkningTil_date_Format = ""
+
+    RegistreringFra_Time = RegistreringFra_date_rest.entry.get()
+    if RegistreringFra_Time:
+        RegistreringFra_date_Format = RegistreringFra_Time.strftime('%Y-%m-%d')
+    else:
+        RegistreringFra_date_Format = ""
+    
+    RegistreringTil_Time = RegistreringTil_date_rest.entry.get()
+    if RegistreringTil_Time:
+        RegistreringTil_date_Format = RegistreringTil_Time.strftime('%Y-%m-%d')
+    else:
+        RegistreringTil_date_Format = ""
+        
+    DAFTimestampFra_Time = DAFTimestampFra_date_rest.entry.get()
+    if DAFTimestampFra_Time:
+        DAFTimestampFra_date_Format = DAFTimestampFra_Time.strftime('%Y-%m-%d')
+    else:
+        DAFTimestampFra_date_Format = ""
+    
+    DAFTimestampTil_Time = DAFTimestampTil_date_rest.entry.get()
+    if DAFTimestampTil_Time:
+        DAFTimestampTil_date_Format = DAFTimestampTil_Time.strftime('%Y-%m-%d')
+    else:
+        DAFTimestampTil_date_Format = ""
+
+    PeriodeaendringFra_Time = PeriodeaendringFra_date_rest.entry.get()
+    if PeriodeaendringFra_Time:
+        PeriodeaendringFra_date_Format = PeriodeaendringFra_Time.strftime('%Y-%m-%d')
+    else:
+        PeriodeaendringFra_date_Format = ""
+
+    PeriodeaendringTil_Time = PeriodeaendringTil_date_rest.entry.get()
+    if PeriodeaendringTil_Time:
+        PeriodeaendringTil_date_Format = PeriodeaendringTil_Time.strftime('%Y-%m-%d')
+    else:
+        PeriodeaendringTil_date_Format = ""
+
+
+
     payload = {
         'username': username_entry_rest.get(),
         'password': password_entry_rest.get(),
@@ -527,120 +578,36 @@ id_label_rest.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
 id_entry_rest = ttk.Entry(group4, width=30)
 id_entry_rest.grid(row=3, column=1, padx=5, pady=5)
 
-global VirkningFra_date_Format
-VirkningFra_date_Format = ""
 
-def update_VirkningFra(VirkningFra_Var):
-    global VirkningFra_date_Format
-    Virkning_Fra_selected_date = VirkningFra_Var.get()
-    if Virkning_Fra_selected_date == "":
-        return
-    VirkningFra_date_rest.entry.delete(0, END)
-    VirkningFra_date_object = datetime.strptime(Virkning_Fra_selected_date, "%d-%m-%Y")
-    VirkningFra_date_Format = VirkningFra_date_object.strftime("%Y-%m-%d")
-    VirkningFra_date_rest.entry.insert(0, VirkningFra_date_Format)
-    
-def ClearVirkFraFunc():
-    VirkningFra_date_rest.entry.delete(0, END)
-
-  
-VirkningFra_Var = StringVar()
 VirkningFra_label_rest = ttk.Label(group4, text="Virkning fra:")
 VirkningFra_label_rest.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
-VirkningFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+VirkningFra_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 VirkningFra_date_rest.grid(row=4, column=1, padx=5, pady=5)
-VirkningFra_date_rest.entry.configure(textvariable=VirkningFra_Var)
 VirkningFra_date_rest.entry.delete(0, END)
-VirkningFra_Var.trace("w", lambda name, index, mode, VirkningFra_Var=VirkningFra_Var: update_VirkningFra(VirkningFra_Var))
-VirkningFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearVirkFraFunc, bootstyle="PRIMARY")
-VirkningFra_Button_rest.grid(row=4, column=2, padx=5, pady=5)
 
-global VirkningTil_date_Format
-VirkningTil_date_Format = ""
-
-def update_VirkningTil(VirkningTil_Var):
-    global VirkningTil_date_Format
-    Virkning_Til_selected_date = VirkningTil_Var.get()
-    if Virkning_Til_selected_date == "":
-        return
-    VirkningTil_date_rest.entry.delete(0, END)
-    VirkningTil_date_object = datetime.strptime(Virkning_Til_selected_date, "%d-%m-%Y")
-    VirkningTil_date_Format = VirkningTil_date_object.strftime("%Y-%m-%d")
-    VirkningTil_date_rest.entry.insert(0, VirkningTil_date_Format)
-    
-def ClearVirkTilFunc():
-    VirkningTil_date_rest.entry.delete(0, END)
-
-VirkningTil_Var = StringVar()
 VirkningTil_label_rest = ttk.Label(group4, text="Virkning til:")
 VirkningTil_label_rest.grid(row=5, column=0, padx=5, pady=5, sticky=tk.W)
-VirkningTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+VirkningTil_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 VirkningTil_date_rest.grid(row=5, column=1, padx=5, pady=5)
-VirkningTil_date_rest.entry.configure(textvariable=VirkningTil_Var)
 VirkningTil_date_rest.entry.delete(0, END)
-VirkningTil_Var.trace("w", lambda name, index, mode, VirkningTil_Var=VirkningTil_Var: update_VirkningTil(VirkningTil_Var))
-VirkningTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearVirkTilFunc, bootstyle="PRIMARY")
-VirkningTil_Button_rest.grid(row=5, column=2, padx=5, pady=5)
 
 Virkningsaktoer_label_rest = ttk.Label(group4, text="Virknings aktør:")
 Virkningsaktoer_label_rest.grid(row=6, column=0, padx=5, pady=5, sticky=tk.W)
 Virkningsaktoer_entry_rest = ttk.Entry(group4, width=30)
 Virkningsaktoer_entry_rest.grid(row=6, column=1, padx=5, pady=5)
 
-global RegistreringFra_date_Format
-RegistreringFra_date_Format = ""
-
-def update_RegistreringFra(RegistreringFra_Var):
-    global RegistreringFra_date_Format
-    Registrering_Fra_selected_date = RegistreringFra_Var.get()
-    if Registrering_Fra_selected_date == "":
-        return
-    RegistreringFra_date_rest.entry.delete(0, END)
-    RegistreringFra_date_object = datetime.strptime(Registrering_Fra_selected_date, "%d-%m-%Y")
-    RegistreringFra_date_Format = RegistreringFra_date_object.strftime("%Y-%m-%d")
-    RegistreringFra_date_rest.entry.insert(0, RegistreringFra_date_Format)
-    
-def ClearRegFraFunc():
-    RegistreringFra_date_rest.entry.delete(0, END)
-
-RegistreringFra_Var = StringVar()
 RegistreringFra_label_rest = ttk.Label(group4, text="Registrering fra:")
 RegistreringFra_label_rest.grid(row=7, column=0, padx=5, pady=5, sticky=tk.W)
-RegistreringFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+RegistreringFra_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 RegistreringFra_date_rest.grid(row=7, column=1, padx=5, pady=5)
 RegistreringFra_date_rest.entry.delete(0, END)
-RegistreringFra_date_rest.entry.configure(textvariable=RegistreringFra_Var)
-RegistreringFra_date_rest.entry.delete(0, END)
-RegistreringFra_Var.trace("w", lambda name, index, mode, RegistreringFra_Var=RegistreringFra_Var: update_RegistreringFra(RegistreringFra_Var))
-RegistreringFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearRegFraFunc, bootstyle="PRIMARY")
-RegistreringFra_Button_rest.grid(row=7, column=2, padx=5, pady=5)
 
-global RegistreringTil_date_Format
-RegistreringTil_date_Format = ""
 
-def update_RegistreringTil(RegistreringTil_Var):
-    global RegistreringTil_date_Format
-    Registrering_Til_selected_date = RegistreringTil_Var.get()
-    if Registrering_Til_selected_date == "":
-        return
-    RegistreringTil_date_rest.entry.delete(0, END)
-    RegistreringTil_date_object = datetime.strptime(Registrering_Til_selected_date, "%d-%m-%Y")
-    RegistreringTil_date_Format = RegistreringTil_date_object.strftime("%Y-%m-%d")
-    RegistreringTil_date_rest.entry.insert(0, RegistreringTil_date_Format)
-
-def ClearRegTilFunc():
-    RegistreringTil_date_rest.entry.delete(0, END)
-
-RegistreringTil_Var = StringVar()
 RegistreringTil_label_rest = ttk.Label(group4, text="Registrering til:")
 RegistreringTil_label_rest.grid(row=8, column=0, padx=5, pady=5, sticky=tk.W)
-RegistreringTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+RegistreringTil_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 RegistreringTil_date_rest.grid(row=8, column=1, padx=5, pady=5)
-RegistreringTil_date_rest.entry.configure(textvariable=RegistreringTil_Var)
 RegistreringTil_date_rest.entry.delete(0, END)
-RegistreringTil_Var.trace("w", lambda name, index, mode, RegistreringTil_Var=RegistreringTil_Var: update_RegistreringTil(RegistreringTil_Var))
-RegistreringTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearRegTilFunc, bootstyle="PRIMARY")
-RegistreringTil_Button_rest.grid(row=8, column=2, padx=5, pady=5)
 
 
 Registreringsaktoer_label_rest = ttk.Label(group4, text="Registrerings aktør:")
@@ -668,60 +635,17 @@ Forretningshaendelse_label_rest.grid(row=13, column=0, padx=5, pady=5, sticky=tk
 Forretningshaendelse_entry_rest = ttk.Entry(group4, width=30)
 Forretningshaendelse_entry_rest.grid(row=13, column=1, padx=5, pady=5)
 
-global DAFTimestampFra_date_Format
-DAFTimestampFra_date_Format = ""
-
-def update_DAFTimestampFra(DAFTimestampFra_Var):
-    global DAFTimestampFra_date_Format
-    DAFTimestamp_Fra_selected_date = DAFTimestampFra_Var.get()
-    if DAFTimestamp_Fra_selected_date == "":
-        return
-    DAFTimestampFra_date_rest.entry.delete(0, END)
-    DAFTimestampFra_date_object = datetime.strptime(DAFTimestamp_Fra_selected_date, "%d-%m-%Y")
-    DAFTimestampFra_date_Format = DAFTimestampFra_date_object.strftime("%Y-%m-%d")
-    DAFTimestampFra_date_rest.entry.insert(0, DAFTimestampFra_date_Format)
-
-def ClearDAFTimestampFraFunc():
-    DAFTimestampFra_date_rest.entry.delete(0, END)
-
-DAFTimestampFra_Var = StringVar()
 DAFTimestampFra_label_rest = ttk.Label(group4, text="Datafordeler opdateringstidspunkt til:")
 DAFTimestampFra_label_rest.grid(row=14, column=0, padx=5, pady=5, sticky=tk.W)
-DAFTimestampFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+DAFTimestampFra_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 DAFTimestampFra_date_rest.grid(row=14, column=1, padx=5, pady=5)
-DAFTimestampFra_date_rest.entry.configure(textvariable=DAFTimestampFra_Var)
 DAFTimestampFra_date_rest.entry.delete(0, END)
-DAFTimestampFra_Var.trace("w", lambda name, index, mode, DAFTimestampFra_Var=DAFTimestampFra_Var: update_DAFTimestampFra(DAFTimestampFra_Var))
-DAFTimestampFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearDAFTimestampFraFunc, bootstyle="PRIMARY")
-DAFTimestampFra_Button_rest.grid(row=14, column=2, padx=5, pady=5)
 
-global DAFTimestampTil_date_Format
-DAFTimestampTil_date_Format = ""
-
-def update_DAFTimestampTil(DAFTimestampTil_Var):
-    global DAFTimestampTil_date_Format
-    DAFTimestamp_Til_selected_date = DAFTimestampTil_Var.get()
-    if DAFTimestamp_Til_selected_date == "":
-        return
-    DAFTimestampTil_date_rest.entry.delete(0, END)
-    DAFTimestampTil_date_object = datetime.strptime(DAFTimestamp_Til_selected_date, "%d-%m-%Y")
-    DAFTimestampTil_date_Format = DAFTimestampTil_date_object.strftime("%Y-%m-%d")
-    DAFTimestampTil_date_rest.entry.insert(0, DAFTimestampTil_date_Format)
-
-def ClearDAFTimestampTilFunc():
-    DAFTimestampTil_date_rest.entry.delete(0, END)
-
-DAFTimestampTil_Var = StringVar()
 DAFTimestampTil_label_rest = ttk.Label(group4, text="Datafordeler opdateringstidspunkt fil:")
 DAFTimestampTil_label_rest.grid(row=15, column=0, padx=5, pady=5, sticky=tk.W)
-DAFTimestampTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+DAFTimestampTil_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 DAFTimestampTil_date_rest.grid(row=15, column=1, padx=5, pady=5)
-DAFTimestampTil_date_rest.entry.configure(textvariable=DAFTimestampTil_Var)
 DAFTimestampTil_date_rest.entry.delete(0, END)
-DAFTimestampTil_Var.trace("w", lambda name, index, mode, DAFTimestampTil_Var=DAFTimestampTil_Var: update_DAFTimestampTil(DAFTimestampTil_Var))
-DAFTimestampTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearDAFTimestampTilFunc, bootstyle="PRIMARY")
-DAFTimestampTil_Button_rest.grid(row=15, column=2, padx=5, pady=5)
-
 
 Etage_label_rest = ttk.Label(group4, text="BBR Etage ID:")
 Etage_label_rest.grid(row=16, column=0, padx=5, pady=5, sticky=tk.W)
@@ -783,60 +707,17 @@ Vest_label_rest.grid(row=27, column=0, padx=5, pady=5, sticky=tk.W)
 Vest_entry_rest = ttk.Entry(group4, width=30)
 Vest_entry_rest.grid(row=27, column=1, padx=5, pady=5)
 
-global PeriodeaendringFra_date_Format
-PeriodeaendringFra_date_Format = ""
-
-def update_PeriodeaendringFra(PeriodeaendringFra_Var):
-    global PeriodeaendringFra_date_Format
-    Periodeaendring_Fra_selected_date = PeriodeaendringFra_Var.get()
-    if Periodeaendring_Fra_selected_date == "":
-        return
-    PeriodeaendringFra_date_rest.entry.delete(0, END)
-    PeriodeaendringFra_date_object = datetime.strptime(Periodeaendring_Fra_selected_date, "%d-%m-%Y")
-    PeriodeaendringFra_date_Format = PeriodeaendringFra_date_object.strftime("%Y-%m-%d")
-    PeriodeaendringFra_date_rest.entry.insert(0, PeriodeaendringFra_date_Format)
-
-def ClearPeriodeaendringFraFunc():
-    PeriodeaendringFra_date_rest.entry.delete(0, END)
-
-PeriodeaendringFra_Var = StringVar()
 PeriodeaendringFra_label_rest = ttk.Label(group4, text="Periodeændring fra:")
 PeriodeaendringFra_label_rest.grid(row=28, column=0, padx=5, pady=5, sticky=tk.W)
-PeriodeaendringFra_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+PeriodeaendringFra_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 PeriodeaendringFra_date_rest.grid(row=28, column=1, padx=5, pady=5)
-PeriodeaendringFra_date_rest.entry.configure(textvariable=PeriodeaendringFra_Var)
 PeriodeaendringFra_date_rest.entry.delete(0, END)
-PeriodeaendringFra_Var.trace("w", lambda name, index, mode, PeriodeaendringFra_Var=PeriodeaendringFra_Var: update_PeriodeaendringFra(PeriodeaendringFra_Var))
-PeriodeaendringFra_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearPeriodeaendringFraFunc, bootstyle="PRIMARY")
-PeriodeaendringFra_Button_rest.grid(row=28, column=2, padx=5, pady=5)
 
-global PeriodeaendringTil_date_Format
-PeriodeaendringTil_date_Format = ""
-
-def update_PeriodeaendringTil(PeriodeaendringTil_Var):
-    global PeriodeaendringTil_date_Format
-    Periodeaendring_Til_selected_date = PeriodeaendringTil_Var.get()
-    if Periodeaendring_Til_selected_date == "":
-        return
-    PeriodeaendringTil_date_rest.entry.delete(0, END)
-    PeriodeaendringTil_date_object = datetime.strptime(Periodeaendring_Til_selected_date, "%d-%m-%Y")
-    PeriodeaendringTil_date_Format = PeriodeaendringTil_date_object.strftime("%Y-%m-%d")
-    PeriodeaendringTil_date_rest.entry.insert(0, PeriodeaendringTil_date_Format)
-
-def ClearPeriodeaendringTilFunc():
-    PeriodeaendringTil_date_rest.entry.delete(0, END)
-
-PeriodeaendringTil_Var = StringVar()
 PeriodeaendringTil_label_rest = ttk.Label(group4, text="Periodeændring Til:")
 PeriodeaendringTil_label_rest.grid(row=29, column=0, padx=5, pady=5, sticky=tk.W)
-PeriodeaendringTil_date_rest = ttk.DateEntry(group4, width=25, firstweekday=0, startdate=None, bootstyle="PRIMARY")
+PeriodeaendringTil_date_rest = ttk.DateEntry(group4, width=25, dateformat='%Y-%m-%d', firstweekday=0, startdate=None, bootstyle="PRIMARY")
 PeriodeaendringTil_date_rest.grid(row=29, column=1, padx=5, pady=5)
-PeriodeaendringTil_date_rest.entry.configure(textvariable=PeriodeaendringTil_Var)
 PeriodeaendringTil_date_rest.entry.delete(0, END)
-PeriodeaendringTil_Var.trace("w", lambda name, index, mode, PeriodeaendringTil_Var=PeriodeaendringTil_Var: update_PeriodeaendringTil(PeriodeaendringTil_Var))
-PeriodeaendringTil_Button_rest = ttk.Button(group4, text ="Tøm", command=ClearPeriodeaendringTilFunc, bootstyle="PRIMARY")
-PeriodeaendringTil_Button_rest.grid(row=29, column=2, padx=5, pady=5)
-
 
 def KunNyesteIPeriodeFunc():
     global KunNyesteIPeriode_check_Tell
