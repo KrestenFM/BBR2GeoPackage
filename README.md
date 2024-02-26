@@ -24,7 +24,7 @@ If this makes you uncomftable you can run the application yourself in the follow
 
  4) Navigate to the directory in which you have placed the BBR2GeoPackage.py Directory alongside its 'Resources' folder
     
-      * You can do this using the command    cd [PATH TO DIRECTORY]
+      * You can do this using the command    ```cd [PATH TO DIRECTORY]```
  5) Run the command ```Python BBR2GeoPackage.py```
 
 ### Current trello board
