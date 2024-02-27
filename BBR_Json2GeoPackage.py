@@ -94,8 +94,6 @@ def convert_local():
         Messagebox.show_info("Success", "Konvertering til GeoPackage fuldført.")
     except Exception as e:
         Messagebox.show_error("Fejl", f"En fejl er opstået: {str(e)}")
-        
-import requests
 
 def rest_call(payload):
     try:
@@ -619,6 +617,7 @@ Status_label_rest = ttk.Label(group4, text="Bygningsstatus:")
 Status_label_rest.grid(row=10, column=0, padx=5, pady=5, sticky=tk.W)
 Status_entry_rest = ttk.Entry(group4, width=30)
 Status_entry_rest.grid(row=10, column=1, padx=5, pady=5)
+Status_entry_rest.insert(0, '6')
 
 Forretningsproces_label_rest = ttk.Label(group4, text="Forretningsproces:")
 Forretningsproces_label_rest.grid(row=11, column=0, padx=5, pady=5, sticky=tk.W)
