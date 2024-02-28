@@ -28,8 +28,8 @@ If this makes you uncomftable you can run the application yourself in the follow
  5) Run the command ```Python BBR2GeoPackage.py```
 
 ### Current trello board
+![billede](https://github.com/KrestenFM/BBRJson2Geopackage/assets/32569116/e3825caa-db92-4709-8b92-b24b84be6d5c)
 
-![billede](https://github.com/KrestenFM/BBRJson2Geopackage/assets/32569116/600cfeaa-10d5-48cd-a086-bf2b87b8d031)
 
 
 
